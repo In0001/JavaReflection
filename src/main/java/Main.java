@@ -52,46 +52,50 @@ public class Main {
         System.out.println("--------------------------------------------");
     }
 
-    private static void printFieldsNames(Object object) {
-        printLine();
-        System.out.println("Поля класса " + object + ":");
+    protected static String getFieldsNames(Object object) {
+        String result = "";
         Field[] fields = object.getClass().getDeclaredFields();
         for (Field f : fields) {
-            System.out.println(f.getName() + " as " + f.getType().getCanonicalName());
+            result += f.getName() + " as " + f.getType().getCanonicalName() + "\n";
         }
-        System.out.println("\nПоля родительских классов:");
         Class cl = object.getClass();
-        if (cl.getSuperclass().getSuperclass() == null)
-            System.out.println("-");
-        else
-            while (cl.getSuperclass() != null) {
-                cl = cl.getSuperclass();
-                Field[] fields2 = cl.getDeclaredFields();
-                for (Field f : fields2) {
-                    System.out.println(f.getName() + " as " + f.getType().getCanonicalName());
-                }
+        while (cl.getSuperclass() != null) {
+            cl = cl.getSuperclass();
+            Field[] fields2 = cl.getDeclaredFields();
+            for (Field f : fields2) {
+                result += f.getName() + " as " + f.getType().getCanonicalName() + "\n";
             }
+        }
+        return result;
+    }
+
+    private static void printFieldsNames(Object object) {
+        printLine();
+        System.out.println("Поля класса " + object + " и родительских классов:");
+        System.out.println(getFieldsNames(object));
+    }
+
+    protected static String getMethodsNames(Object object) {
+        String result = "";
+        Method[] methods = object.getClass().getDeclaredMethods();
+        for (Method m : methods) {
+            result += m.getName() + " return " + m.getReturnType().getCanonicalName() + "\n";
+        }
+        Class cl = object.getClass();
+        while (cl.getSuperclass().getSuperclass() != null) {
+            cl = cl.getSuperclass();
+            Method[] methods2 = cl.getDeclaredMethods();
+            for (Method m : methods2) {
+                result += m.getName() + " return " + m.getReturnType().getCanonicalName() + "\n";
+            }
+        }
+        return result;
     }
 
     private static void printMethodsNames(Object object) {
         printLine();
-        System.out.println("Методы класса " + object + ":");
-        Method[] methods = object.getClass().getDeclaredMethods();
-        for (Method m : methods) {
-            System.out.println(m.getName() + " return " + m.getReturnType().getCanonicalName());
-        }
-        System.out.println("\nМетоды родительских классов:");
-        Class cl = object.getClass();
-        if (cl.getSuperclass().getSuperclass() == null)
-            System.out.println("-");
-        else
-            while (cl.getSuperclass().getSuperclass() != null) {
-                cl = cl.getSuperclass();
-                Method[] methods2 = cl.getDeclaredMethods();
-                for (Method m : methods2) {
-                    System.out.println(m.getName() + " return " + m.getReturnType().getCanonicalName());
-                }
-            }
+        System.out.println("Методы класса " + object + " и родительских классов:");
+        System.out.println(getMethodsNames(object));
     }
 
     private static void printFieldsValues(Object object) {
